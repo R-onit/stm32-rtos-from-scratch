@@ -1,0 +1,20 @@
+# STM32CubeIDE metadata
+.metadata/
+.settings/
+.cproject
+.project
+*.launch
+
+# Build artifacts
+Debug/
+Release/
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.d
+
+# Logs
+*.log
+
