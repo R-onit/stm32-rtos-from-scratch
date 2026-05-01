@@ -1,16 +1,20 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "STM32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/drivers"
+                "${workspaceFolder}/cmsis/Include",
+                "${workspaceFolder}/cmsis/Device",
+                "${workspaceFolder}/core",
+                "${workspaceFolder}/drivers/inc",
+                "${workspaceFolder}/app"
             ],
-            "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "defines": [
+                "STM32F103xB"
+            ],
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "cStandard": "c11",
+            "intelliSenseMode": "gcc-arm"
         }
     ],
     "version": 4
