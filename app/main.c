@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "stm32f103xb.h"
 #include "systick.h"
+#include "task_led.h"
+#include "scheduler.h"
 
 #define SYSCLK_HZ   64000000UL
 
@@ -41,19 +43,14 @@ void gpio_init(void) {
 
 int main(void) {
     clock_init();
-    // systick_init(64000000) will go here next
-        gpio_init();
-
     systick_init(SYSCLK_HZ);
 
-    uint32_t last = 0;
+    task_led_init();
+    scheduler_init();
 
+    scheduler_add_task("led", task_led, 500);
 
-    while (1) {
-        if ((systick_get_tick() - last) >= 1000) {
-            last = systick_get_tick();
-            GPIOA->ODR ^= (1 << 5);   // toggle PA5
-        }
-    }
+    scheduler_run();
+
     return 0;
 }
