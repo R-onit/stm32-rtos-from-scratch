@@ -3,7 +3,9 @@
 #include "systick.h"
 #include "task_led.h"
 #include "scheduler.h"
-
+// add this temporarily to main.c to check
+// #include <stdio.h>  // won't link but useful to know
+// OR check in your map file after build
 #define SYSCLK_HZ   64000000UL
 
 
@@ -39,8 +41,18 @@ void gpio_init(void) {
     GPIOA->CRL &= ~(0xF << 20);   // clear bits for PA5
     GPIOA->CRL |=  (0x2 << 20);   // MODE=10, CNF=00
 }
-
-
+void HardFault_Handler(void) {
+    // rapid blink = hard fault caught here
+    while(1) {
+        GPIOA->ODR ^= (1 << 5);
+        for(volatile int i = 0; i < 100000; i++);
+    }
+}
+void task_dummy(void) {
+    while(1) {
+        // idle — just burns cycles
+    }
+}
 int main(void) {
     clock_init();
     systick_init(SYSCLK_HZ);
@@ -48,8 +60,8 @@ int main(void) {
     task_led_init();
     scheduler_init();
 
-    scheduler_add_task("led", task_led, 500);
-
+    scheduler_add_task("led",   task_led,   500);
+    scheduler_add_task("idle",  task_dummy, 100);
     scheduler_run();
 
     return 0;

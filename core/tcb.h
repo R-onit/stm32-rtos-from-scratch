@@ -2,6 +2,7 @@
 #define TCB_H
 
 #include <stdint.h>
+#define STACK_SIZE 256   // 256 words = 1KB per task
 
 //Task state enum
 typedef enum{
@@ -22,11 +23,13 @@ A state — READY or SUSPENDED for now
 
 */
 typedef struct{
+    uint32_t    *stack_ptr;
     void (*task_fn)(void);
     char name[16];
     uint32_t period;
     uint32_t last_run;
     TaskState_t state;
+    uint32_t   stack[STACK_SIZE]; 
 
 }TCB_t;
 

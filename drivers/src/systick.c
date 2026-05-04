@@ -22,6 +22,9 @@ void systick_init(uint32_t sysclk_hz) {
 // step 5: ISR - you told me tick_count++
 void SysTick_Handler(void) {
     tick_count++;
+
+    // trigger PendSV — set pending bit in ICSR register
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
 // step 6: getter - returns tick_count

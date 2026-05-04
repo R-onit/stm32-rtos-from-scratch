@@ -1,6 +1,6 @@
 #include "task_led.h"
 #include "stm32f103xb.h"
-
+#include "systick.h"
 
 
 void task_led_init(void){
@@ -17,6 +17,22 @@ void task_led_init(void){
 
 }   // enable clock, configure PA5 as output
 
-void task_led(void){
-    GPIOA->ODR ^= (1 << 5);   // toggle PA5
-}        // toggle PA5 — this is the task function
+// void task_led(void) {
+//     static uint32_t last = 0;
+//     uint32_t now = systick_get_tick();
+//     if ((now - last) >= 500) {
+//         GPIOA->ODR ^= (1 << 5);
+//         last = now;
+//     }
+// }     // toggle PA5 — this is the task function
+
+void task_led(void) {
+    while(1) {
+        static uint32_t last = 0;
+        uint32_t now = systick_get_tick();
+        if ((now - last) >= 500) {
+            GPIOA->ODR ^= (1 << 5);
+            last = now;
+        }
+    }
+}

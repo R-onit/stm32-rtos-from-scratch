@@ -42,8 +42,13 @@ SRC := $(wildcard $(APP_DIR)/*.c)      \
        $(wildcard $(CORE_DIR)/*.c)     \
        $(wildcard $(DRIVERS_SRC)/*.c)
 
+ASM_SRC := $(wildcard core/*.s)
+ASM_OBJ := $(ASM_SRC:%.s=$(OBJ_DIR)/%.o)
+
 OBJ := $(SRC:%.c=$(OBJ_DIR)/%.o)
 OBJ += $(OBJ_DIR)/startup.o
+OBJ += $(ASM_OBJ)     
+
 
 # ── Rules ─────────────────────────────────────────────────
 all: $(BIN)
@@ -70,6 +75,11 @@ $(BIN): $(ELF)
 	@$(OBJCOPY) -O binary $< $@
 	@echo "  Done → $(BIN)"
 
+$(OBJ_DIR)/%.o: %.s | $(OBJ_DIR)
+	@mkdir -p $(dir $@)
+	@echo "  AS  $<"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
 # ── Utilities ─────────────────────────────────────────────
 size: $(ELF)
 	@$(SIZE) $(ELF)
@@ -88,6 +98,10 @@ flash: $(ELF)
 
 openocd:
 	@$(OPENOCD)
+
+size_check:
+	@arm-none-eabi-gcc $(CFLAGS) -x c - <<< \
+	'#include "core/tcb.h"\nint main(){return sizeof(TCB_t);}'
 
 gdb:
 	@gdb-multiarch $(ELF) -ex "target remote localhost:3333"
